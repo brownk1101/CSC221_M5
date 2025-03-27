@@ -37,10 +37,12 @@ If option 1 is selected :
 •	Read all fields and content in the OWNER table into a DataFrame.
 •	Display the DataFrame created.
 •	Write DataFrame content into a csv file. Name the file “owner.csv”
+
 If option 2 is selected:
 •	Read all fields and content in the PETS table into a DataFrame.
 •	Display the DataFrame created.
 •	Write DataFrame content into a csv file. Name the file “pets.csv”
+
 If option 3 is selected:
 •	Prompt the user to enter OwnerId
 •	Retrieve and display all records (from BOTH tables) that pertain to that Owner. Fields you need to retrieve are as following (OwnerId, OwnerFirstName, OwnerLastName, OwnerPhone, OwnerEmail ,PetId, PetName, PetBreed, PetDOB)
@@ -58,6 +60,7 @@ You will need to use DataFrame features and methods in this option
 •	Prompt the user to enter PetBreed they want to research
 •	Retrieve all records that reference the PetBreed entered.
 •	Display the total charges and overall average for the PetBreed entered.
+
 If option 6 is selected:
 Display a message notifying the user that the program will terminate. The program is to stop after displaying the message.
 If different option selected:
