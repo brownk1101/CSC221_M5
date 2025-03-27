@@ -4,6 +4,7 @@ information database"""
 import sqlite3 as db
 import pandas as pd
 
+
 def extract_database(file_name, table_names):
     """
     extracts data from a dataframe and write it to a DataFrame
@@ -35,6 +36,7 @@ def extract_database(file_name, table_names):
     connection.close()
     return df_dict
 
+
 def get_table_names(file_name):
     """
     get the names of all tables in a database
@@ -56,6 +58,7 @@ def get_table_names(file_name):
         tables.append(row[0])
     connection.close()
     return tables
+
 
 def create_owner_df(df_dict, owner_id=None):
     """
@@ -91,7 +94,6 @@ def write_to_csv(df, csv_name, columns=("all",)):
     else:
         df.to_csv(csv_name, columns=list(columns), index=False)
         print(f"{csv_name} created")
-
 
 
 def calculate_charges(df, group_by_col="PetName"):

@@ -17,6 +17,7 @@ def display_menu(menu_options, size, ):
     for option in menu_options:
         print(option)
 
+
 def get_menu_choice(total_options):
     """
     gets and validated users menu choice
@@ -49,30 +50,36 @@ def display_records(df, columns = ("all",)):
         print(df[list(columns)])
 
 
-def display_charges(charges, charge_type, breed=None):
+def display_owner_charges(charges):
     """
-    displays charges for either an owner or breed
-    :param charges: list: a list that holds a dict of pets and their
-    charges, a sum of all charges, and an average for charges.
-    :param type: str: clarifies if charges are for an owner or breed
-    :param breed: str: breed name, is no argument breed=None
+    displays the charges for an owner
+    :param charges:  list that holds charges_dict: dict: dictionary of
+    each pet and it's total charges, sum_of_charge: int: total charge
+    for customer (not used in this function), and avg_charge: int:
+    average charge across pets
     :return: None
     """
+    print('\nCharges for each pet are as follows:')
+    print("_" * 40)
+    for pet, charge in charges[0].items():
+        print(f'{pet + ":":<23}  ${charge:.2f}')
+    print("_" * 40)
+    print(f'Total charges for owner: ${charges[1]:.2f}\n\n\n')
 
-    # Print the charges for an Owner's pet(s) and the sum of all
-    # charges for that owner
-    if charge_type == "owner":
-        print('\nCharges for each pet are as follows:')
-        print("_" * 40)
-        for pet, charge in (charges[0]).items():
-            print (f'{pet +":":<23}  ${charge:.2f}')
-        print("_" * 40)
-        print(f'Total charges for owner: ${charges[1]:.2f}\n\n\n')
 
-    # Print the total charges for the breed and the average charge
-    else:
-        print(f"\n Total Charge for all {breed}s: {charges[1]}.")
-        print(f"\n Average charge for a {breed}: {charges[2]}\n")
+def display_breed_charges(charges, breed):
+    """
+    displays the charges for a breed
+    :param charges:  list that holds charges_dict: dict: dictionary of
+    each pet and it's total charges, sum_of_charge: int: total charge
+    for customer (not used in this function), and avg_charge: int:
+    average charge across pets
+    :param breed: str:  breed name to get charges for
+    :return: None
+    """
+    print(f"\nTotal Charge for all {breed}s: ${charges[1]:.2f}")
+    print(f"Average charge for a {breed}: ${charges[2]:.2f}\n")
+
 
 def display_breeds(breed_list):
     """
