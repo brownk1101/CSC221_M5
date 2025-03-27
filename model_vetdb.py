@@ -106,6 +106,13 @@ def calculate_charges(df, group_by_col="PetName"):
     :return: charges_dict: dict: dictionary of each pet and it's total
     charges, sum_of_charge: int: total charge for customer,
     avg_charge: int: average charge across pets
+
+    >>> import pandas as pd
+    >>> data = {'PetName': ['Fluffy', 'Fluffy', 'Spike'], 'Charge': [
+    ... 100, 200, 150]}
+    >>> df = pd.DataFrame(data)
+    >>> calculate_charges(df)
+    ({'Fluffy': 300, 'Spike': 150}, 450, 225.0)
     """
 
     # calculate charges for a group
@@ -129,7 +136,16 @@ def get_breeds(pet_df):
     gets tuple of pet breeds from pets DataFrame
     :param pet_df: Pandas DataFrame: dataframe that holds all the
     pets in a vet clinics records
-    :return: tuple: a tuple of pet breeds
+    :return: list: a list of pet breeds
+
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({
+    ...     'PetId': [1, 2, 3, 4],
+    ...     'PetName': ['Fido', 'Mittens', 'Spike', 'Bella'],
+    ...     'PetBreed': ['Beagle', 'Tabby', 'Beagle', 'Bulldog']
+    ... })
+    >>> get_breeds(df)
+    ('Beagle', 'Tabby', 'Bulldog')
     """
 
     breed_list = pet_df['PetBreed'].unique().tolist()
@@ -147,3 +163,8 @@ def create_breed_df(breed, pet_df):
     breed_df = pet_df[pet_df["PetBreed"].str.lower() ==
                       breed.lower()]
     return breed_df
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

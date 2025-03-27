@@ -63,7 +63,7 @@ def get_pet_breed(breed_list):
             print("Please enter a valid number.")
 
 
-def handle_display_owner(df_dict):
+def handle_display_owners(df_dict):
     """
     handles the display owner option from menu
     :param df_dict: a dictionary that holds the DataFrames for Owners
