@@ -83,9 +83,9 @@ def display_breed_charges(charges, breed):
 
 def display_breeds(breed_list):
     """
-    prints
-    :param breed_list:
-    :return:
+    Displays the list of pet breeds in three evenly spaced columns.
+    :param breed_list: list: list of strings representing pet breeds
+    :return: None
     """
 
     # Display all breeds available
@@ -100,7 +100,7 @@ def display_breeds(breed_list):
 def display_exit():
     """
     displays exiting message
-    :return:
+    :return: None
     """
 
     print("Exiting owner information")

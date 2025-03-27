@@ -81,13 +81,13 @@ def main():
         menu_length = len(menu_options)
         menu_choice = view.get_menu_choice(menu_length)
         if menu_choice == 1:
-            ctrl.handle_display_owner(df_dict)
+            ctrl.handle_display_owners(df_dict)
         if menu_choice == 2:
             ctrl.handle_display_pets(df_dict)
         if menu_choice == 3:
             ctrl.handle_owner_search(df_dict)
         if menu_choice == 4:
-           ctrl.handle_owner_search(df_dict)
+           ctrl.handle_owner_charges(df_dict)
         if menu_choice == 5:
             ctrl.handle_breed_search(df_dict)
         if menu_choice == 6:
