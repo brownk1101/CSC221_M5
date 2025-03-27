@@ -16,24 +16,28 @@ def extract_database(file_name, table_names):
     """
 
     df_dict = {}
+    try:
+        # connect to database
+        connection = db.connect(file_name)
+        cursor = connection.cursor()
 
-    # connect to database
-    connection = db.connect(file_name)
-    cursor = connection.cursor()
+        # create a DataFrame for each table in the database
+        for table in table_names:
+            cursor.execute(f'SELECT * FROM {table}')
+            rows = cursor.fetchall()
 
-    # create a DataFrame for each table in the database
-    for table in table_names:
-        cursor.execute(f'SELECT * FROM {table}')
-        rows = cursor.fetchall()
+            # Get column names from table
+            column_names = [description[0] for description in
+                            cursor.description]
 
-        # Get column names from table
-        column_names = [description[0] for description in
-                        cursor.description]
-
-        # Create DataFrame for table
-        df = pd.DataFrame(rows, columns=column_names)
-        df_dict[table] = df
-    connection.close()
+            # Create DataFrame for table
+            df = pd.DataFrame(rows, columns=column_names)
+            df_dict[table] = df
+        connection.close()
+    except db.DatabaseError as e:
+        print(f"Database error {e}")
+    except Exception as e:
+        print(f"Unexpected error extracting data: {e}")
     return df_dict
 
 
@@ -44,20 +48,25 @@ def get_table_names(file_name):
     :return: tables: list: list of table names
     """
 
-    # connect to database
-    connection = db.connect(file_name)
-    cursor = connection.cursor()
 
-    # get table names
-    cursor.execute("Select name FROM sqlite_master Where type='table';")
-    rows = cursor.fetchall()
-    tables = []
+    try:
+        # connect to database
+        connection = db.connect(file_name)
+        cursor = connection.cursor()
 
-    # add each table name to list
-    for row in rows:
-        tables.append(row[0])
-    connection.close()
-    return tables
+        # get table names
+        cursor.execute("Select name FROM sqlite_master Where type='table';")
+        rows = cursor.fetchall()
+        tables = []
+
+        # add each table name to list
+        for row in rows:
+            tables.append(row[0])
+        connection.close()
+        return tables
+    except db.DatabaseError as e:
+        print(f"Failed to get table names: {e}")
+        return []
 
 
 def create_owner_df(df_dict, owner_id=None):
@@ -88,12 +97,17 @@ def write_to_csv(df, csv_name, columns=("all",)):
     :return: None
     """
 
-    if columns[0] == "all":
-        df.to_csv(csv_name, index=False)
-        print(f"{csv_name} created")
-    else:
-        df.to_csv(csv_name, columns=list(columns), index=False)
-        print(f"{csv_name} created")
+    try:
+        if columns[0] == "all":
+            df.to_csv(csv_name, index=False)
+            print(f"{csv_name} created")
+        else:
+            df.to_csv(csv_name, columns=list(columns), index=False)
+            print(f"{csv_name} created")
+    except KeyError as e:
+        print(f"Column error: {e}")
+    except Exception as e:
+        print(f"Failed to write to CSV: {e}")
 
 
 def calculate_charges(df, group_by_col="PetName"):
@@ -115,20 +129,27 @@ def calculate_charges(df, group_by_col="PetName"):
     ({'Fluffy': 300, 'Spike': 150}, 450, 225.0)
     """
 
-    # calculate charges for a group
-    group_charges = df.groupby(group_by_col)['Charge'].sum()
+    try:
+        # calculate charges for a group
+        group_charges = df.groupby(group_by_col)['Charge'].sum()
 
-    # make a dict from grouped charges
-    charges_dict = group_charges.to_dict()
+        # make a dict from grouped charges
+        charges_dict = group_charges.to_dict()
 
-    # Calculate sum of charges
-    sum_of_charges = group_charges.sum()
+        # Calculate sum of charges
+        sum_of_charges = group_charges.sum()
 
-    # Calculate average
-    avg_charge = sum_of_charges/len(group_charges) if len(
-        group_charges) > 0 else 0
+        # Calculate average
+        avg_charge = sum_of_charges/len(group_charges) if len(
+            group_charges) > 0 else 0
 
-    return charges_dict, sum_of_charges, avg_charge
+        return charges_dict, sum_of_charges, avg_charge
+    except KeyError as e:
+        print(f"Missing column in DataFrame: {e}")
+        return {}, 0, 0
+    except Exception as e:
+        print(f"Failed to calculate charges: {e}")
+        return {}, 0, 0
 
 
 def get_breeds(pet_df):

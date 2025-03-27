@@ -26,13 +26,19 @@ def get_menu_choice(total_options):
     """
 
     while True:
-        #prompt user for menu choice
-        menu_choice = int(input(f'\nPlease select a valid menu option '
-                                f'(1-{total_options})\n'))
+        try:
+            #prompt user for menu choice
+            menu_choice = int(input(f'\nPlease select a valid menu option '
+                                    f'(1-{total_options})\n'))
 
-        # Test if menu choice is valid
-        if 0 < menu_choice <= total_options:
-            return menu_choice
+            # Test if menu choice is valid
+            if 0 < menu_choice <= total_options:
+                return menu_choice
+        except ValueError:
+            print("Please enter a number.")
+        except Exception as e:
+            print(
+                f"Unexpected error occurred while selecting menu: {e}")
 
 
 def display_records(df, columns = ("all",)):
@@ -44,10 +50,15 @@ def display_records(df, columns = ("all",)):
     :return: None
     """
     print('\n' * 3)
-    if columns[0] == "all":
-        print(df)
-    else:
-        print(df[list(columns)])
+    try:
+        if columns[0] == "all":
+            print(df)
+        else:
+            print(df[list(columns)])
+    except KeyError as e:
+        print(f"Column not found: {e}")
+    except Exception as e:
+        print(f"Failed to display records: {e}")
 
 
 def display_owner_charges(charges):
