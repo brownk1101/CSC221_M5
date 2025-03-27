@@ -63,6 +63,13 @@ def main():
     :return: None
     """
 
+    try:
+        file_name = "vet_serv.db"
+        tables = model.get_table_names(file_name)
+        df_dict = model.extract_database(file_name, tables)
+    except Exception as e:
+        print(f"Error loading database: {e}")
+        return
 
     menu_options = [
         "1) Display OWNER content and create DataFrame",
@@ -73,25 +80,26 @@ def main():
         "6) Exit"]
     size = len(max(menu_options, key=len)) + 6
     menu_choice = 0
-    file_name = "vet_serv.db"
-    tables = model.get_table_names(file_name)
-    df_dict = model.extract_database(file_name, tables)
+
     while menu_choice != 6:
-        view.display_menu(menu_options, size)
-        menu_length = len(menu_options)
-        menu_choice = view.get_menu_choice(menu_length)
-        if menu_choice == 1:
-            ctrl.handle_display_owners(df_dict)
-        if menu_choice == 2:
-            ctrl.handle_display_pets(df_dict)
-        if menu_choice == 3:
-            ctrl.handle_owner_search(df_dict)
-        if menu_choice == 4:
-           ctrl.handle_owner_charges(df_dict)
-        if menu_choice == 5:
-            ctrl.handle_breed_search(df_dict)
-        if menu_choice == 6:
-            view.display_exit()
+        try:
+            view.display_menu(menu_options, size)
+            menu_length = len(menu_options)
+            menu_choice = view.get_menu_choice(menu_length)
+            if menu_choice == 1:
+                ctrl.handle_display_owners(df_dict)
+            if menu_choice == 2:
+                ctrl.handle_display_pets(df_dict)
+            if menu_choice == 3:
+                ctrl.handle_owner_search(df_dict)
+            if menu_choice == 4:
+               ctrl.handle_owner_charges(df_dict)
+            if menu_choice == 5:
+                ctrl.handle_breed_search(df_dict)
+            if menu_choice == 6:
+                view.display_exit()
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
     main()
