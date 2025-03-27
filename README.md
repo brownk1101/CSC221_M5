@@ -32,6 +32,7 @@ Create a program that does the following.
 4) Calculate Total Charge by Owner
 5) Retrieve Pet information by PetBreed
 6) Exit
+
 If option 1 is selected :
 •	Read all fields and content in the OWNER table into a DataFrame.
 •	Display the DataFrame created.
