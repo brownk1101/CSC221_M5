@@ -51,9 +51,13 @@ def display_records(df, columns = ("all",)):
     """
     print('\n' * 3)
     try:
+
+        # if no columns specified, display all for the dataframe
         if columns[0] == "all":
             print(df)
         else:
+
+            # only display the columns requested
             print(df[list(columns)])
     except KeyError as e:
         print(f"Column not found: {e}")
@@ -88,7 +92,7 @@ def display_breed_charges(charges, breed):
     :param breed: str:  breed name to get charges for
     :return: None
     """
-    print(f"\nTotal Charge for all {breed}s: ${charges[1]:.2f}")
+    print(f"\nTotal Charge for all {breed}: ${charges[1]:.2f}")
     print(f"Average charge for a {breed}: ${charges[2]:.2f}\n")
 
 
