@@ -169,6 +169,7 @@ def get_breeds(pet_df):
     ('Beagle', 'Tabby', 'Bulldog')
     """
 
+    # get all the unique breeds and add them to a list
     breed_list = pet_df['PetBreed'].unique().tolist()
     return breed_list
 

@@ -66,6 +66,8 @@ def main():
     try:
         file_name = "vet_serv.db"
         tables = model.get_table_names(file_name)
+
+        # Create a dataframe for each table in the database
         df_dict = model.extract_database(file_name, tables)
     except Exception as e:
         print(f"Error loading database: {e}")
@@ -78,6 +80,8 @@ def main():
         "4) Calculate Total Charge by Owner,",
         "5) Retrieve Pet information by PetBreed",
         "6) Exit"]
+
+    # longest string in menu for header line
     size = len(max(menu_options, key=len)) + 6
     menu_choice = 0
 
