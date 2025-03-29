@@ -3,6 +3,7 @@ handles functions that allower user interactions for the vet clinic's
 owner and pet database
 """
 
+
 def display_menu(menu_options, size, ):
     """
     displays menu for user
@@ -13,7 +14,7 @@ def display_menu(menu_options, size, ):
     """
 
     print("\nVet Clinic Pet Owner's Database")
-    print("_"* size)
+    print("_" * size)
     for option in menu_options:
         print(option)
 
@@ -27,7 +28,7 @@ def get_menu_choice(total_options):
 
     while True:
         try:
-            #prompt user for menu choice
+            # prompt user for menu choice
             menu_choice = int(input(f'\nPlease select a valid menu option '
                                     f'(1-{total_options})\n'))
 
@@ -41,7 +42,7 @@ def get_menu_choice(total_options):
                 f"Unexpected error occurred while selecting menu: {e}")
 
 
-def display_records(df, columns = ("all",)):
+def display_records(df, columns=("all",)):
     """
     Displays the data from a dataframe
     :param df pandas DataFrame: a DataFrame
@@ -51,9 +52,13 @@ def display_records(df, columns = ("all",)):
     """
     print('\n' * 3)
     try:
+
+        # if no columns specified, display all for the dataframe
         if columns[0] == "all":
             print(df)
         else:
+
+            # only display the columns requested
             print(df[list(columns)])
     except KeyError as e:
         print(f"Column not found: {e}")
@@ -88,7 +93,7 @@ def display_breed_charges(charges, breed):
     :param breed: str:  breed name to get charges for
     :return: None
     """
-    print(f"\nTotal Charge for all {breed}s: ${charges[1]:.2f}")
+    print(f"\nTotal Charge for all {breed}: ${charges[1]:.2f}")
     print(f"Average charge for a {breed}: ${charges[2]:.2f}\n")
 
 
@@ -100,13 +105,14 @@ def display_breeds(breed_list):
     """
 
     # Display all breeds available
-    print(f'\nAvailable Breeds:\n')
+    print('\nAvailable Breeds:\n')
     for index, breed in enumerate(breed_list, start=1):
         print(f"{breed:<20}", end='  ')
         if index % 3 == 0:
             print()
     if len(breed_list) % 3 != 0:
         print()
+
 
 def display_exit():
     """

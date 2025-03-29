@@ -1,3 +1,7 @@
+"""
+handlers for main function
+"""
+
 import view_vetdb as view
 import model_vetdb as model
 
@@ -12,19 +16,21 @@ def get_ownerID(owner_df):
     found = False
     while not found:
         try:
-            id_to_validate = input("Please enter owner ID or press "
-                                   "enter "
-                                   "to return to main menu: ")
-            if id_to_validate == "":
+            id_input = input("Please enter owner ID or press enter "
+                             "return to main menu: ")
+            if id_input == "":
                 print("Returning to main menu")
                 return None
-            if int(id_to_validate) not in owner_df["OwnerId"].tolist():
-                print("OwnerID not found")
-                found = False
-            else:
+            id_to_validate = int(id_input)
+            # Compare using string versions for safety
+            owner_ids = owner_df["OwnerId"].astype(str).tolist()
+            if str(id_to_validate) in owner_ids:
                 return id_to_validate
+            print("OwnerID not found")
         except ValueError:
             print("Please enter a valid numeric ID.")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
 
 
 def get_pet_breed(breed_list):
@@ -60,8 +66,8 @@ def get_pet_breed(breed_list):
             choice = int(input("Select the number of the breed: "))
             if 1 <= choice <= len(matches):
                 return matches[choice - 1]
-            else:
-                print("Invalid selection. Try again.")
+
+            print("Invalid selection. Try again.")
         except ValueError:
             print("Please enter a valid number.")
 
@@ -76,6 +82,8 @@ def handle_display_owners(df_dict):
 
     try:
         view.display_records(df_dict["OWNER"])
+
+        # write the owner DataFrame to a csv file
         model.write_to_csv(df_dict["OWNER"], "owner.csv")
     except Exception as e:
         print(f"Error displaying or saving owner data: {e}")
@@ -91,6 +99,8 @@ def handle_display_pets(df_dict):
 
     try:
         view.display_records(df_dict["PETS"])
+
+        # write the pets DataFrame to a csv file
         model.write_to_csv(df_dict["PETS"], "pets.csv")
     except Exception as e:
         print(f"Error displaying or saving pet data: {e}")
@@ -104,40 +114,61 @@ def handle_owner_search(df_dict):
     :return: None
     """
 
-    try:
-        ownerID = get_ownerID(df_dict["OWNER"])
-        fields = ["OwnerId", "OwnerFirstName", "OwnerLastName",
-                  "OwnerPhone", "OwnerEmail", "PetId", "PetName",
-                  "PetBreed", "PetDOB"]
-        if ownerID is not None:
-            owner_df = model.create_owner_df(df_dict, ownerID)
-            owner_name = owner_df["OwnerLastName"].iloc[0].lower()
-            file_name = f'{owner_name}_{ownerID}.csv'
-            model.write_to_csv(owner_df, file_name, fields)
-    except Exception as e:
-        print(f"Error retrieving owner data: {e}")
+    ownerID = get_ownerID(df_dict["OWNER"])
+    if ownerID is None:
+        return
+
+    if ownerID not in df_dict["PETS"]["OwnerId"].tolist():
+        print("This owner has no pet records.")
+        return
+
+    # create a DataFrame with only specific owner data
+    owner_df = model.create_owner_df(df_dict, ownerID)
+
+    if ownerID not in df_dict["PETS"]["OwnerId"].tolist():
+        print("This owner has no pet records.")
+        return
+
+    fields = ["OwnerId", "OwnerFirstName", "OwnerLastName",
+              "OwnerPhone", "OwnerEmail", "PetId", "PetName",
+              "PetBreed", "PetDOB"]
+
+    # get the owner name to use for file naming
+    owner_name = owner_df["OwnerLastName"].iloc[0].lower()
+    view.display_records(owner_df, fields)
+    file_name = f'{owner_name}_{ownerID}.csv'
+
+    # write the owner DataFrame to a csv file
+    model.write_to_csv(owner_df, file_name, fields)
 
 
-def handle_owner_charges(df_dict, ownerID):
+def handle_owner_charges(df_dict):
     """
     handles the display owner charges option from menu
     :param df_dict: a dictionary that holds the DataFrames for Owners
     and Pets
     :return: None
     """
-    try:
-        ownerID = get_ownerID(df_dict["OWNER"])
-        if ownerID is None:
-            return
-        owner_df = model.create_owner_df(df_dict, ownerID)
-        fields = ("OwnerId", "OwnerFirstName", "OwnerLastName",
-                  "OwnerEmail", "PetId", "PetName", "PetBreed",
-                  "Service", "Date", "Charge")
-        charges = model.calculate_charges(owner_df)
-        view.display_records(owner_df, fields)
-        view.display_owner_charges(charges)
-    except Exception as e:
-        print (f"Error calculating owner charges: {e}")
+
+    ownerID = get_ownerID(df_dict["OWNER"])
+    if ownerID is None:
+        return
+
+    # Check if that owner has pets before merging
+    if ownerID not in df_dict["PETS"]["OwnerId"].tolist():
+        print("This owner has no pet records.")
+        return
+
+    owner_df = model.create_owner_df(df_dict, ownerID)
+
+    fields = ["OwnerId", "OwnerFirstName", "OwnerLastName",
+              "OwnerPhone", "OwnerEmail", "PetId", "PetName",
+              "PetBreed", "PetDOB"]
+
+    owner_name = owner_df["OwnerLastName"].iloc[0].lower()
+    view.display_records(owner_df, fields)
+    file_name = f"{owner_name}_{ownerID}.csv"
+    model.write_to_csv(owner_df, file_name, fields)
 
 
 def handle_breed_search(df_dict):
@@ -148,13 +179,17 @@ def handle_breed_search(df_dict):
     :return: None
     """
 
-    try:
-        breed_list = model.get_breeds(df_dict["PETS"])
-        breed = get_pet_breed(breed_list)
-        breed_df = model.create_breed_df(breed, df_dict["PETS"])
-        charges = model.calculate_charges(breed_df, "PetBreed")
-        view.display_breed_charges(charges, breed)
-    except Exception as e:
-        print(f"Error retrieving breed data: {e})")
+    # Get a list of all breeds in DataFrame
+    breed_list = model.get_breeds(df_dict["PETS"])
 
+    # Get the breed to search by
+    breed = get_pet_breed(breed_list)
 
+    # Create a DataFrame to hold all pets of a specific breed
+    breed_df = model.create_breed_df(breed, df_dict["PETS"])
+
+    # Calculate charges for that breed
+    charges = model.calculate_charges(breed_df, "PetBreed")
+
+    # Display charges for a specific breed
+    view.display_breed_charges(charges, breed)

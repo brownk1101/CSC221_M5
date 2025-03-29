@@ -36,8 +36,8 @@ def extract_database(file_name, table_names):
         connection.close()
     except db.DatabaseError as e:
         print(f"Database error {e}")
-    except Exception as e:
-        print(f"Unexpected error extracting data: {e}")
+    except (db.OperationalError, PermissionError) as e:
+        print(f"Database access error: {e}")
     return df_dict
 
 
@@ -47,7 +47,6 @@ def get_table_names(file_name):
     :param file_name: str: name of database file
     :return: tables: list: list of table names
     """
-
 
     try:
         # connect to database
@@ -78,7 +77,6 @@ def create_owner_df(df_dict, owner_id=None):
     it's pets data
     """
 
-
     # combine the owner and pet DataFrame based on d
     merged_df = pd.merge(df_dict["OWNER"], df_dict["PETS"],
                          on='OwnerId', how='inner')
@@ -106,8 +104,8 @@ def write_to_csv(df, csv_name, columns=("all",)):
             print(f"{csv_name} created")
     except KeyError as e:
         print(f"Column error: {e}")
-    except Exception as e:
-        print(f"Failed to write to CSV: {e}")
+    except (PermissionError, OSError) as e:
+        print(f"File/column error while writing CSV: {e}")
 
 
 def calculate_charges(df, group_by_col="PetName"):
@@ -169,8 +167,10 @@ def get_breeds(pet_df):
     ('Beagle', 'Tabby', 'Bulldog')
     """
 
+    # get all the unique breeds and add them to a list
     breed_list = pet_df['PetBreed'].unique().tolist()
     return breed_list
+
 
 def create_breed_df(breed, pet_df):
     """

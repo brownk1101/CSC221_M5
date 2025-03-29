@@ -56,6 +56,7 @@ import model_vetdb as model
 import view_vetdb as view
 import controller_utils as ctrl
 
+
 def main():
     """
     main function that displays menu and calls other functions for
@@ -66,6 +67,8 @@ def main():
     try:
         file_name = "vet_serv.db"
         tables = model.get_table_names(file_name)
+
+        # Create a dataframe for each table in the database
         df_dict = model.extract_database(file_name, tables)
     except Exception as e:
         print(f"Error loading database: {e}")
@@ -78,6 +81,8 @@ def main():
         "4) Calculate Total Charge by Owner,",
         "5) Retrieve Pet information by PetBreed",
         "6) Exit"]
+
+    # longest string in menu for header line
     size = len(max(menu_options, key=len)) + 6
     menu_choice = 0
 
@@ -93,13 +98,14 @@ def main():
             if menu_choice == 3:
                 ctrl.handle_owner_search(df_dict)
             if menu_choice == 4:
-               ctrl.handle_owner_charges(df_dict)
+                ctrl.handle_owner_charges(df_dict)
             if menu_choice == 5:
                 ctrl.handle_breed_search(df_dict)
             if menu_choice == 6:
                 view.display_exit()
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
+
 
 if __name__ == "__main__":
     main()
